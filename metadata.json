@@ -1,0 +1,6 @@
+{
+  "name": "HarmoniSat: MODIS & VIIRS Harmonization Studio",
+  "description": "NASA Space Apps Challenge 2026: Interactive 3D Earth, sensor orbit & swath modeling, spectral response harmonization, BRDF correction, and multi-decadal Earth observation data continuity.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

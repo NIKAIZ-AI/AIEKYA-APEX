@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIKYA APEX // Global Canopy Thermal Imaging Mission Control</title>
+  <meta name="description" content="Autonomous multi-satellite orbital harmonization merging MODIS and VIIRS active fire observations into a continuous global climate time series.">
+
+  <!-- Google Fonts: Rajdhani, Inter, Space Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Rajdhani:wght@600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================
+       NASA MISSION CONTROL DASHBOARD THEME
+       Strict Palette Adherence:
+       Background (60%): #11141A (Deep Space Charcoal)
+       Cards/Containers (30%): #212C3D (Atmospheric Navy)
+       Main Text: #EAECEF (Starlight White)
+       Secondary Accents/Borders: #3D726D (Muted Pine)
+       Primary Action/Alerts (10%): #E65F2B (Ignition Orange)
+       ========================================================== */
+    :root {
+      --bg-space: #11141A;
+      --card-navy: #212C3D;
+      --text-starlight: #EAECEF;
+      --accent-pine: #3D726D;
+      --primary-ignition: #E65F2B;
+      --font-heading: 'Rajdhani', -apple-system, sans-serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-space);
+      color: var(--text-starlight);
+      font-family: var(--font-body);
+      font-size: 17px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    /* TYPOGRAPHY RULES */
+    h1, h2, h3 {
+      font-family: var(--font-heading);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: var(--text-starlight);
+      line-height: 1.05;
+      text-align: left;
+    }
+
+    .mono {
+      font-family: var(--font-mono);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* LAYOUT CONTAINERS */
+    .mission-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 24px 64px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    /* 1. HEADER / NAVIGATION */
+    header.site-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--accent-pine);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .status-beacon {
+      width: 12px;
+      height: 12px;
+      background-color: var(--primary-ignition);
+      border-radius: 2px;
+      box-shadow: 0 0 10px var(--primary-ignition);
+      animation: beacon-pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes beacon-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.9); }
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-starlight);
+      opacity: 0.8;
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: opacity 0.2s, color 0.2s;
+    }
+
+    .nav-links a:hover {
+      opacity: 1;
+      color: var(--primary-ignition);
+    }
+
+    .telemetry-chip {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border: 1px solid var(--accent-pine);
+      color: var(--accent-pine);
+      border-radius: 4px;
+      background: rgba(61, 114, 109, 0.1);
+    }
+
+    /* 2. HERO SECTION */
+    section.hero-section {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      gap: 24px;
+      max-width: 980px;
+      padding-top: 16px;
+    }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .alert-badge {
+      background-color: var(--primary-ignition);
+      color: var(--text-starlight);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 2px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .hero-coordinates {
+      color: var(--accent-pine);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: 0.1em;
+    }
+
+    h1.hero-title {
+      font-size: clamp(40px, 6vw, 76px);
+      line-height: 0.95;
+      letter-spacing: 0.02em;
+    }
+
+    p.hero-subhead {
+      font-size: 18px;
+      color: var(--text-starlight);
+      opacity: 0.85;
+      max-width: 820px;
+      line-height: 1.6;
+    }
+
+    /* IGNITION ORANGE BUTTON (SUBTLE HOVER GLOW & SCALE) */
+    .btn-ignition-orange {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background-color: var(--primary-ignition);
+      color: var(--text-starlight);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 18px 36px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.25s;
+      margin-top: 8px;
+    }
+
+    .btn-ignition-orange:hover {
+      transform: scale(1.025);
+      box-shadow: 0 0 28px rgba(230, 95, 43, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      background-color: #f06a35;
+    }
+
+    .btn-ignition-orange:active {
+      transform: scale(0.98);
+    }
+
+    /* 3. LIVE DATA DASHBOARD */
+    section.dashboard-section {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid rgba(61, 114, 109, 0.4);
+      padding-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .section-header h2 {
+      font-size: 26px;
+      letter-spacing: 0.05em;
+    }
+
+    .grid-3-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .data-card {
+      background-color: var(--card-navy);
+      border: 1px solid var(--accent-pine);
+      border-radius: 6px;
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 20px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .data-card:hover {
+      border-color: #4f8f89;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .card-label {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-starlight);
+      opacity: 0.9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-value {
+      font-family: var(--font-mono);
+      font-size: clamp(36px, 4.5vw, 52px);
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      color: var(--text-starlight);
+    }
+
+    .card-value.highlight-orange {
+      color: var(--primary-ignition);
+    }
+
+    .card-subtext {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-pine);
+      margin-top: 6px;
+    }
+
+    .card-footer {
+      border-top: 1px solid rgba(61, 114, 109, 0.3);
+      padding-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    /* 4. MISSION STATEMENT */
+    section.mission-section {
+      background-color: var(--card-navy);
+      border: 1px solid var(--accent-pine);
+      border-radius: 6px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .mission-section h2 {
+      font-size: 28px;
+    }
+
+    .wide-columns {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 36px;
+      color: var(--text-starlight);
+      opacity: 0.88;
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    .mission-footer {
+      border-top: 1px solid var(--accent-pine);
+      padding-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-pine);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    @media (max-width: 640px) {
+      .wide-columns {
+        grid-template-columns: 1fr;
+      }
+      .nav-links {
+        display: none;
+      }
+      section.mission-section {
+        padding: 24px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mission-container">
+    <!-- 1. HEADER / NAVIGATION -->
+    <header class="site-header">
+      <div class="brand-group">
+        <div class="status-beacon"></div>
+        <div class="brand-title">AIKYA APEX // MISSION CONTROL</div>
+        <span class="telemetry-chip">NASA SPACE APPS 2026</span>
+      </div>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#hero">OVERVIEW</a></li>
+          <li><a href="#dashboard">TELEMETRY</a></li>
+          <li><a href="#mission">PROTOCOL</a></li>
+          <li><a href="/" target="_self">LAUNCH 3D GLOBE</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- 2. HERO SECTION -->
+    <section id="hero" class="hero-section">
+      <div class="hero-eyebrow">
+        <span class="alert-badge">ACTIVE SENSOR NETWORK</span>
+        <span class="hero-coordinates">GRID LAT: -15.00° / LON: -68.00° (AMAZON ARC)</span>
+      </div>
+
+      <h1 class="hero-title">GLOBAL CANOPY THERMAL IMAGING</h1>
+
+      <p class="hero-subhead">
+        Autonomous multi-satellite orbital harmonization merging Terra/Aqua MODIS (1,000m) and Suomi-NPP/NOAA-20 VIIRS (375m) radiance observations. Continuous multi-decadal time series normalizing spatial resolution, footprint growth, and diurnal observation schedules.
+      </p>
+
+      <a href="/" class="btn-ignition-orange">
+        <span>VIEW ACTIVE FIRES</span>
+        <span>→</span>
+      </a>
+    </section>
+
+    <!-- 3. LIVE DATA DASHBOARD -->
+    <section id="dashboard" class="dashboard-section">
+      <div class="section-header">
+        <h2>LIVE SENSOR TELEMETRY &amp; HARMONIZED INDICES</h2>
+        <span class="mono" style="color: var(--accent-pine); font-size: 12px;">UPDATED UTC 11:46:00 // PASS 892</span>
+      </div>
+
+      <div class="grid-3-col">
+        <!-- Card 1: Active Anomalies -->
+        <div class="data-card">
+          <div class="card-label">
+            <span>ACTIVE THERMAL ANOMALIES</span>
+            <span style="color: var(--primary-ignition);">● LIVE</span>
+          </div>
+          <div>
+            <div class="card-value highlight-orange">14,892</div>
+            <div class="card-subtext">DETECTIONS / 24H ORBITAL PASS</div>
+          </div>
+          <div class="card-footer">
+            <span>CONFIDENCE: &gt; 80%</span>
+            <span class="mono" style="color: #4ade80;">+12.4% VS BASELINE</span>
+          </div>
+        </div>
+
+        <!-- Card 2: Acres Burned -->
+        <div class="data-card">
+          <div class="card-label">
+            <span>ACRES BURNED EXTENT</span>
+            <span style="color: var(--accent-pine);">EST. TOTAL</span>
+          </div>
+          <div>
+            <div class="card-value">3,284,190</div>
+            <div class="card-subtext">CUMULATIVE CANOPY ACRES</div>
+          </div>
+          <div class="card-footer">
+            <span>FRP MEAN: 48.2 MW</span>
+            <span class="mono" style="color: var(--primary-ignition);">SEVERITY: HIGH</span>
+          </div>
+        </div>
+
+        <!-- Card 3: CO2 Emissions -->
+        <div class="data-card">
+          <div class="card-label">
+            <span>CO2 EMISSIONS FLUX</span>
+            <span style="color: var(--accent-pine);">ATMOSPHERIC</span>
+          </div>
+          <div>
+            <div class="card-value">142.8 MT</div>
+            <div class="card-subtext">MEGATONS CO2-EQ RELEASE</div>
+          </div>
+          <div class="card-footer">
+            <span>INJECTION: 6.8 KM</span>
+            <span class="mono" style="color: #38bdf8;">PLUME INDEX: MOD</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. MISSION STATEMENT -->
+    <section id="mission" class="mission-section">
+      <h2>MISSION STATEMENT &amp; CALIBRATION DIRECTIVE</h2>
+
+      <div class="wide-columns">
+        <p>
+          The Aikya Apex Initiative addresses the fundamental sensor transition discontinuity in global wildland fire monitoring. For over two decades, NASA’s MODIS instruments aboard Terra and Aqua established baseline measurements of fire occurrence, radiative power, and diurnal phenology. In 2012, the VIIRS instrument introduced 375m sub-pixel thermal sensitivity, detecting roughly 3.2 times more active fire pixels due to its sharper point spread function and constrained limb-viewing footprint aggregation.
+        </p>
+
+        <p>
+          Without rigorous cross-sensor calibration, longitudinal climate records exhibit an artificial step-change jump that misleads emergency responders, climate modelers, and public land managers. Aikya Apex applies power-law cluster aggregation, Spectral Band Adjustment Factors (SBAF), and RossThick-LiSparse BRDF directional corrections to reconcile multi-decadal fire records into an authoritative, single-truth historical record.
+        </p>
+      </div>
+
+      <div class="mission-footer">
+        <div>SATELLITE FLEET: TERRA (10:30 AM) · AQUA (01:30 PM) · SNPP (01:30 PM) · NOAA-20 (01:30 PM)</div>
+        <div style="color: var(--primary-ignition);">AIKYA APEX PROTOCOL ACTIVE // 2000–2026</div>
+      </div>
+    </section>
+  </div>
+
+</body>
+</html>
